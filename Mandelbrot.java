@@ -21,7 +21,7 @@ public class Mandelbrot extends Canvas {
         this.pl = HØYDE / størrelse; // Antall piksler for hver lengde
 
         this.midtX = midtX;
-        this.midtY = midtX;
+        this.midtY = midtY;
         this.størrelse = størrelse;
 
         gc = this.getGraphicsContext2D();
@@ -32,8 +32,8 @@ public class Mandelbrot extends Canvas {
         Color farge = svart;
         for (int rad = 0; rad < HØYDE; rad++) {
             for (int kolonne = 0; kolonne < BREDDE; kolonne++) {
-                double imag = (rad - midtY) / pl;
-                double real = (kolonne - midtX) / pl;
+                double real = (rad - midtX) / pl;
+                double imag = (kolonne - midtY) / pl;
                 Complex c = new Complex(real, imag);
 
                 int antIter = tellIter(c);
@@ -49,20 +49,6 @@ public class Mandelbrot extends Canvas {
         }
     }
 
-    void zoomInn(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    void zoomUt(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    void panorer(double x, double y) {
-        this.midtX = midtX - (BREDDE / 2) + x;
-        this.midtY = midtY - (HØYDE / 2) + y;
-        tegnMandel();
-    }
-
     private int tellIter(Complex c) {
         Complex z = c;
         int i = 0;
@@ -73,5 +59,19 @@ public class Mandelbrot extends Canvas {
             }
         }
         return i;
+    }
+    
+    void zoomInn(double x, double y) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void zoomUt(double x, double y) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void panorer(double x, double y) {
+        midtX = midtX + (BREDDE / 2) - x;
+        midtY = midtY + (HØYDE / 2) - y;
+        tegnMandel();
     }
 }

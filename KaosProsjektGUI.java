@@ -15,6 +15,7 @@ public class KaosProsjektGUI extends Application {
     Mandelbrot mandelbrot;
     ToggleGroup knappGruppe;
     RadioButton zoomInn, zoomUt, panorer;
+    Label koordinater;
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,21 +45,8 @@ public class KaosProsjektGUI extends Application {
     private void tegnTab() {
         if (mandelbrotTab.isSelected()) {
             tegnMTab();
-
         }
         if (conwayTab.isSelected()) {
-        }
-    }
-
-    private void mbKlikk(double x, double y) {
-        if (zoomInn.isSelected()) {
-            mandelbrot.zoomInn(x, y);
-        }
-        if (zoomUt.isSelected()) {
-            mandelbrot.zoomUt(x, y);
-        }
-        if (panorer.isSelected()) {
-            mandelbrot.panorer(x, y);
         }
     }
 
@@ -70,6 +58,8 @@ public class KaosProsjektGUI extends Application {
         zoomInn.setToggleGroup(knappGruppe);
         zoomUt.setToggleGroup(knappGruppe);
         panorer.setToggleGroup(knappGruppe);
+        
+        koordinater = new Label();
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -83,6 +73,7 @@ public class KaosProsjektGUI extends Application {
         tegn.setOnAction(e -> tegnMandelbrot());
 
         grid.add(tegn, 0, 3);
+        grid.add(koordinater, 0, 5);
         tabRamme.setLeft(grid);
         tegnMandelbrot();
     }
@@ -94,8 +85,20 @@ public class KaosProsjektGUI extends Application {
     private void tegnMandelbrot() {
         mandelbrot = new Mandelbrot(250, 250, 3);
         mandelbrot.tegnMandel();
-        mandelbrot.setOnMouseClicked(e -> mbKlikk(e.getX(), e.getY()));
+        mandelbrot.setOnMouseClicked(e -> mandelbrotKlikk(e.getX(), e.getY()));
+        mandelbrot.setOnMouseMoved(e -> koordinater.setText("x : " + e.getX() + " y : " + e.getY()));
         tabRamme.setCenter(mandelbrot);
+    }
+        private void mandelbrotKlikk(double x, double y) {
+        if (zoomInn.isSelected()) {
+            mandelbrot.zoomInn(x, y);
+        }
+        if (zoomUt.isSelected()) {
+            mandelbrot.zoomUt(x, y);
+        }
+        if (panorer.isSelected()) {
+            mandelbrot.panorer(x, y);
+        }
     }
 
 }
