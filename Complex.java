@@ -30,7 +30,9 @@ public class Complex {
     public double getImag() {
         return imag;
     }
-
+    public double abs() {
+        return (real*real)+(imag*imag);
+    }
     @Override
     public String toString() {
         return "Complex{" + "real=" + real + ", imag=" + imag + '}';

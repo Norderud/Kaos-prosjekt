@@ -58,7 +58,7 @@ public class KaosProsjektGUI extends Application {
         zoomInn.setToggleGroup(knappGruppe);
         zoomUt.setToggleGroup(knappGruppe);
         panorer.setToggleGroup(knappGruppe);
-        
+
         koordinater = new Label();
 
         GridPane grid = new GridPane();
@@ -83,13 +83,14 @@ public class KaosProsjektGUI extends Application {
     }
 
     private void tegnMandelbrot() {
-        mandelbrot = new Mandelbrot(250, 250, 3);
+        mandelbrot = new Mandelbrot();
         mandelbrot.tegnMandel();
         mandelbrot.setOnMouseClicked(e -> mandelbrotKlikk(e.getX(), e.getY()));
         mandelbrot.setOnMouseMoved(e -> koordinater.setText("x : " + e.getX() + " y : " + e.getY()));
         tabRamme.setCenter(mandelbrot);
     }
-        private void mandelbrotKlikk(double x, double y) {
+
+    private void mandelbrotKlikk(double x, double y) {
         if (zoomInn.isSelected()) {
             mandelbrot.zoomInn(x, y);
         }

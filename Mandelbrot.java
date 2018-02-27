@@ -6,41 +6,40 @@ import javafx.scene.paint.Color;
 
 public class Mandelbrot extends Canvas {
 
-    final int MAX_ITERERING = 300;
-    final int HØYDE = 500;
-    final int BREDDE = 500;
+    final int MAX_ITERERING = 200;
+    final int HØYDE = 700;
+    final int BREDDE = 700;
 
     final Color svart = new Color(0, 0, 0, 1);
     
     GraphicsContext gc;
     double midtX, midtY, størrelse, pl;
 
-    public Mandelbrot(double midtX, double midtY, double størrelse) {
+    public Mandelbrot() {
         setHeight(HØYDE);
         setWidth(BREDDE);
-        this.pl = HØYDE / størrelse; // Antall piksler for hver lengde
-
-        this.midtX = midtX;
-        this.midtY = midtY;
-        this.størrelse = størrelse;
+        this.midtX = BREDDE/2;
+        this.midtY = HØYDE/2;
+        this.størrelse = 3;
 
         gc = this.getGraphicsContext2D();
 
     }
 
     public void tegnMandel() {
+        this.pl = HØYDE / størrelse; // Antall piksler for hver lengde
         Color farge = svart;
         for (int rad = 0; rad < HØYDE; rad++) {
+            double real = (rad - midtX) / pl;
             for (int kolonne = 0; kolonne < BREDDE; kolonne++) {
-                double real = (rad - midtX) / pl;
                 double imag = (kolonne - midtY) / pl;
                 Complex c = new Complex(real, imag);
 
                 int antIter = tellIter(c);
 
                 if (antIter < MAX_ITERERING) {
-                    double b = (double) antIter / 300;
-                    farge = new Color(0, b, b, 1);
+                    double b = (double) antIter / MAX_ITERERING;
+                    farge = new Color(b, 0, b, 1);
                 }
                 gc.setFill(farge);
                 gc.fillRect(rad, kolonne, 1, 1);
@@ -54,7 +53,7 @@ public class Mandelbrot extends Canvas {
         int i = 0;
         for (; i < MAX_ITERERING; i++) {
             z = z.gange(z).pluss(c);
-            if (z.getReal() > 2) {
+            if (z.abs() > 4) { 
                 break;
             }
         }
@@ -62,11 +61,15 @@ public class Mandelbrot extends Canvas {
     }
     
     void zoomInn(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        midtX = midtX + (BREDDE / 2) - x;
+        midtY = midtY + (HØYDE / 2) - y;
+        this.størrelse = størrelse*0.8;
+        tegnMandel();
     }
 
     void zoomUt(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.størrelse = størrelse*1.2;
+        tegnMandel();
     }
 
     void panorer(double x, double y) {
