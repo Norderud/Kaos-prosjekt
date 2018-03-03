@@ -6,8 +6,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 
+/**
+ *
+ * @author Åsmund Klasse for GUI'en til Conways game of life
+ */
 public class GOLView extends BorderPane {
 
     private Button reset, fyll, neste, start, stopp;
@@ -19,10 +22,11 @@ public class GOLView extends BorderPane {
         tegnCTab();
     }
 
+    // Lager menyen
     private void tegnCTab() {
         this.setStyle("-fx-background-color: #737373;");
         reset = new Button("Reset");
-        reset.setOnAction(e -> gol.resetGOL((int)sSlider.getValue()));
+        reset.setOnAction(e -> gol.resetGOL((int) sSlider.getValue()));
         fyll = new Button("Fyll");
         fyll.setOnAction(e -> gol.fyllRandom());
         neste = new Button("Neste steg");
@@ -35,7 +39,6 @@ public class GOLView extends BorderPane {
         hSlider = new Slider(0, 200, 100);
         sSlider = new Slider(10, 200, 50);
         sSlider.setShowTickLabels(true);
-
         meny = new HBox(10);
         meny.getChildren().addAll(reset, fyll, neste, start, stopp, new Label("Hastighet"), hSlider, new Label("Størrelse"), sSlider);
         meny.setPadding(new Insets(10, 0, 10, 10));
@@ -43,6 +46,10 @@ public class GOLView extends BorderPane {
         tegnGOL();
     }
 
+    /**
+     * Oppretter et nytt Game of life objekt og legger til muselytter for klikk
+     * og drag
+     */
     public void tegnGOL() {
         gol = new GameOfLife();
         this.setCenter(gol);

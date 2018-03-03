@@ -5,8 +5,16 @@ import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ *
+ * @author Åsmund Norderud
+ * Game of life - Simulering av celler som enten lever, dør eller
+ * blir født for hver generasjon som går
+ *
+ */
 public class GameOfLife extends Canvas {
 
     private final int HØYDE = 700;
@@ -20,14 +28,17 @@ public class GameOfLife extends Canvas {
 
     private Timeline loop;
 
+    private Text genTeller;
     private GraphicsContext gc;
 
+    /**
+     * Konstruktøren til GameOfLife-objektet
+     */
     public GameOfLife() {
         setHeight(HØYDE);
         setWidth(BREDDE);
         this.str = 100;
         this.antGen = 0;
-
         gen = new boolean[str][str];
         nesteGen = new boolean[str][str];
 
@@ -37,6 +48,8 @@ public class GameOfLife extends Canvas {
         resetGOL(str);
     }
 
+    // Metode for å teste alle cellene og legge resultatet i en ny matrise(nesteGen),
+    // kopiere nesteGen[][] over til gen[][] og tegne rutenettet på nytt.
     void nesteGen() {
         for (int rad = 1; rad < str - 1; rad++) {
             for (int kol = 1; kol < str - 1; kol++) {
@@ -49,6 +62,8 @@ public class GameOfLife extends Canvas {
         repaint();
     }
 
+    // Metoden som tester en enkelt celle, teller naboer og 
+    // bestemmer om den skal leve, dø eller bli født
     private void testCelle(int rad, int kol) {
         int antNaboer = 0;
         for (int i = -1; i <= 1; i++) {
@@ -72,6 +87,7 @@ public class GameOfLife extends Canvas {
         }
     }
 
+    // Metode for å tegne brettet ut i fra verdiene i gen[][]
     private void repaint() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, BREDDE, HØYDE);
@@ -84,11 +100,18 @@ public class GameOfLife extends Canvas {
                 } else {
                     gc.setFill(Color.BLACK);
                 }
-                gc.fillRect(x, y, rutebredde+1, rutebredde+1);
+                gc.fillRect(x, y, rutebredde + 1, rutebredde + 1);
             }
         }
+        gc.setFill(Color.WHITE);
+        gc.fillText(antGen + "", BREDDE - 20, HØYDE - 10);
     }
 
+    /**
+     * Metode for å kjøre nesteGen() med en valgt hastighet
+     *
+     * @param h Hastigheten som brukeren velger
+     */
     public void start(double h) {
         double hastighet = (1 / h) * 10000;
         loop.stop();
@@ -97,10 +120,14 @@ public class GameOfLife extends Canvas {
         loop.play();
     }
 
+    /**
+     * Metode for å stoppe loopen som kjører
+     */
     public void stopp() {
         loop.stop();
     }
 
+    // Metode for å tegne på rutenettet og oppdatere gen[][] matrisen.
     void fyllRute(double x, double y) {
         int rad = (int) (x / rutebredde);
         int kol = (int) (y / rutebredde);
@@ -110,6 +137,7 @@ public class GameOfLife extends Canvas {
         gc.fillRect(rad * rutebredde, kol * rutebredde, rutebredde, rutebredde);
     }
 
+    // Fyller brettet med tilfeldig valgte lever/død celler
     void fyllRandom() {
         for (int rad = 0; rad < str; rad++) {
             for (int kol = 0; kol < str; kol++) {
@@ -125,6 +153,7 @@ public class GameOfLife extends Canvas {
         repaint();
     }
 
+    // Metode for å fylle matrisene med false-verdier(død) og tegne det på nytt
     void resetGOL(int s) {
         str = s;
         gen = new boolean[str][str];
@@ -135,6 +164,7 @@ public class GameOfLife extends Canvas {
         repaint();
     }
 
+    // Metode for å tømme en boolean-matrise(Fylle med false-verdier)
     private boolean[][] tømMatrise(boolean[][] matrise) {
         boolean tomMatrise[][] = new boolean[matrise.length][matrise.length];
         for (int rad = 0; rad < matrise.length; rad++) {
@@ -144,9 +174,4 @@ public class GameOfLife extends Canvas {
         }
         return tomMatrise;
     }
-
-    public int getAntGen() {
-        return antGen;
-    }
-
 }
