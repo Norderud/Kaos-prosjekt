@@ -9,7 +9,8 @@ import javafx.scene.layout.HBox;
 
 /**
  *
- * @author Åsmund Klasse for GUI'en til Conways game of life
+ * @author Åsmund Norderud
+ * Klasse for GUI'en til Conways game of life
  */
 public class GOLView extends BorderPane {
 

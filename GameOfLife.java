@@ -5,7 +5,6 @@ import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -27,8 +26,6 @@ public class GameOfLife extends Canvas {
     private int antGen;
 
     private Timeline loop;
-
-    private Text genTeller;
     private GraphicsContext gc;
 
     /**
@@ -104,7 +101,7 @@ public class GameOfLife extends Canvas {
             }
         }
         gc.setFill(Color.WHITE);
-        gc.fillText(antGen + "", BREDDE - 20, HØYDE - 10);
+        gc.fillText(antGen + "", BREDDE - 50, HØYDE - 10);
     }
 
     /**
