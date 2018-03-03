@@ -1,83 +1,49 @@
 package kaos.prosjekt;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class GameOfLife extends Canvas {
 
-    private final int HØYDE = 600;
+    private final int HØYDE = 700;
     private final int BREDDE = 800;
     private double rutebredde;
 
-    private boolean[][] gen;
-    private boolean[][] nesteGen;
+    private boolean[][] gen, nesteGen;
 
-    private int breddeStr, høydeStr;
-    private boolean kjører;
-    private TimerTask task;
+    private int str;
+    private int antGen;
+
+    private Timeline loop;
 
     private GraphicsContext gc;
 
-    public GameOfLife(int breddeStr, int høydeStr) {
+    public GameOfLife() {
         setHeight(HØYDE);
         setWidth(BREDDE);
-        this.breddeStr = breddeStr;
-        this.høydeStr = høydeStr;
+        this.str = 100;
+        this.antGen = 0;
 
-        rutebredde = (double) HØYDE / høydeStr;
-
-        gen = new boolean[breddeStr][høydeStr];
-        nesteGen = new boolean[breddeStr][høydeStr];
+        gen = new boolean[str][str];
+        nesteGen = new boolean[str][str];
 
         gc = this.getGraphicsContext2D();
-        gc.setFill(Color.GRAY);
-        gc.fillRect(0, 0, BREDDE, HØYDE);
-        gen = tømMatrise(gen);
-        resetGOL();
-        repaint();
-        kjører = false;
-    }
 
-    void resetGOL() {
-        gen = tømMatrise(gen);
-        nesteGen = tømMatrise(nesteGen);
-        nesteGen = tømMatrise(nesteGen);
-        repaint();
-    }
-
-    private void repaint() {
-        for (int rad = 1; rad < breddeStr - 1; rad++) {
-            for (int kol = 1; kol < høydeStr - 1; kol++) {
-                double x = rutebredde * rad;
-                double y = rutebredde * kol;
-                if (gen[rad][kol] == true) {
-                    gc.setFill(Color.RED);
-                } else {
-                    gc.setFill(Color.WHITE);
-                }
-                gc.fillRect(x, y, rutebredde - 2, rutebredde - 2);
-            }
-        }
-    }
-
-    void fyllRute(double x, double y) {
-        int rad = (int) (x / rutebredde);
-        int kol = (int) (y / rutebredde);
-        gen[rad][kol] = true;
-
-        gc.setFill(Color.RED);
-        gc.fillRect(rad * rutebredde, kol * rutebredde, rutebredde - 2, rutebredde - 2);
+        loop = new Timeline(new KeyFrame(Duration.millis(50), e -> nesteGen()));
+        resetGOL(str);
     }
 
     void nesteGen() {
-        for (int rad = 1; rad < breddeStr - 1; rad++) {
-            for (int kol = 1; kol < høydeStr - 1; kol++) {
+        for (int rad = 1; rad < str - 1; rad++) {
+            for (int kol = 1; kol < str - 1; kol++) {
                 testCelle(rad, kol);
             }
         }
+        antGen++;
         gen = nesteGen;
         nesteGen = tømMatrise(nesteGen);
         repaint();
@@ -95,36 +61,58 @@ public class GameOfLife extends Canvas {
         if (gen[rad][kol] == true) {
             antNaboer--;
             if (antNaboer < 2 || antNaboer > 3) {
-                nesteGen[rad][kol] = false;
+                nesteGen[rad][kol] = false; // Dør
             } else {
-                nesteGen[rad][kol] = true;
+                nesteGen[rad][kol] = true; // Lever
             }
         } else {
             if (antNaboer == 3) {
-                nesteGen[rad][kol] = true;
+                nesteGen[rad][kol] = true; // Blir født
             }
         }
     }
-        public void start() {
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                nesteGen();
+
+    private void repaint() {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, BREDDE, HØYDE);
+        for (int rad = 1; rad < str - 1; rad++) {
+            for (int kol = 1; kol < str - 1; kol++) {
+                double x = rutebredde * rad;
+                double y = rutebredde * kol;
+                if (gen[rad][kol] == true) {
+                    gc.setFill(Color.GREENYELLOW);
+                } else {
+                    gc.setFill(Color.BLACK);
+                }
+                gc.fillRect(x, y, rutebredde+1, rutebredde+1);
             }
-        };
-        new Timer().schedule(task, 0, 50);
+        }
+    }
+
+    public void start(double h) {
+        double hastighet = (1 / h) * 10000;
+        loop.stop();
+        loop = new Timeline(new KeyFrame(Duration.millis(hastighet), e -> nesteGen()));
+        loop.setCycleCount(Timeline.INDEFINITE);
+        loop.play();
     }
 
     public void stopp() {
-        if (task == null) {
-            return;
-        }
-        task.cancel();
+        loop.stop();
+    }
+
+    void fyllRute(double x, double y) {
+        int rad = (int) (x / rutebredde);
+        int kol = (int) (y / rutebredde);
+
+        gen[rad][kol] = true;
+        gc.setFill(Color.GREENYELLOW);
+        gc.fillRect(rad * rutebredde, kol * rutebredde, rutebredde, rutebredde);
     }
 
     void fyllRandom() {
-        for (int rad = 0; rad < breddeStr; rad++) {
-            for (int kol = 0; kol < høydeStr; kol++) {
+        for (int rad = 0; rad < str; rad++) {
+            for (int kol = 0; kol < str; kol++) {
                 double random = Math.random() * 10 / 5;
                 int rundet = (int) random;
                 if (rundet == 0) {
@@ -137,6 +125,16 @@ public class GameOfLife extends Canvas {
         repaint();
     }
 
+    void resetGOL(int s) {
+        str = s;
+        gen = new boolean[str][str];
+        nesteGen = new boolean[str][str];
+        rutebredde = (double) HØYDE / str;
+        gen = tømMatrise(gen);
+        nesteGen = tømMatrise(nesteGen);
+        repaint();
+    }
+
     private boolean[][] tømMatrise(boolean[][] matrise) {
         boolean tomMatrise[][] = new boolean[matrise.length][matrise.length];
         for (int rad = 0; rad < matrise.length; rad++) {
@@ -145,6 +143,10 @@ public class GameOfLife extends Canvas {
             }
         }
         return tomMatrise;
+    }
+
+    public int getAntGen() {
+        return antGen;
     }
 
 }
